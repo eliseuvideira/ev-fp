@@ -1,10 +1,10 @@
 export abstract class Either<T> {
-  static of<T>(value: T) {
-    return new Right(value);
+  static of<T>(value: T): Right<T> {
+    return new Right<T>(value);
   }
 
-  static error<E extends Error>(error: E) {
-    return new Left(error);
+  static error<T, E extends Error>(error: E): Left<T> {
+    return new Left<T, E>(error);
   }
 
   static right<T>(either: Either<T>): either is Right<T> {

@@ -1,4 +1,4 @@
-import { Either, Left, Right } from "../src/index";
+import { Either } from "../src/index";
 
 describe("Either", () => {
   it("lifts a value with `Either.of` to an `Either` as `Right` value", () => {
@@ -54,13 +54,13 @@ describe("Either", () => {
 
     const original = { id: Math.random() };
 
-    const right = new Right(original);
+    const right = Either.of(original);
 
     expect(Either.left(right)).toBe(false);
 
     const error = new Error(`error: ${Math.random()}`);
 
-    const left = new Left(error);
+    const left = Either.error(error);
 
     expect(Either.left(left)).toBe(true);
   });
@@ -70,13 +70,13 @@ describe("Either", () => {
 
     const original = { id: Math.random() };
 
-    const right = new Right(original);
+    const right = Either.of(original);
 
     expect(Either.right(right)).toBe(true);
 
     const error = new Error(`error: ${Math.random()}`);
 
-    const left = new Left(error);
+    const left = Either.error(error);
 
     expect(Either.right(left)).toBe(false);
   });
@@ -86,13 +86,13 @@ describe("Either", () => {
 
     const original = { id: Math.random() };
 
-    const right = new Right(original);
+    const right = Either.of(original);
 
     expect(right.type).toBe("right");
 
     const error = new Error(`error: ${Math.random()}`);
 
-    const left = new Left(error);
+    const left = Either.error(error);
 
     expect(left.type).toBe("left");
   });
@@ -104,7 +104,7 @@ describe("Left", () => {
 
     const error = new Error(`error: ${Math.random()}`);
 
-    const left = new Left(error);
+    const left = Either.error(error);
 
     try {
       left.unwrap();
@@ -120,7 +120,7 @@ describe("Left", () => {
 
     const error = new Error(`error: ${Math.random()}`);
 
-    const left = new Left(error);
+    const left = Either.error(error);
 
     const fn = jest.fn();
 
@@ -138,7 +138,7 @@ describe("Right", () => {
 
     const original = { id: Math.random() };
 
-    const right = new Right(original);
+    const right = Either.of(original);
 
     const unwrapped = right.unwrap();
 
@@ -152,7 +152,7 @@ describe("Right", () => {
 
     const transformed = { id: Math.random() };
 
-    const right = new Right(original);
+    const right = Either.of(original);
 
     const fn = jest.fn(() => transformed);
 

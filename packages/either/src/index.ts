@@ -1,1 +1,1 @@
-export { Either, Left, Right } from "./utils/Either";
+export { Either } from "./utils/Either";
