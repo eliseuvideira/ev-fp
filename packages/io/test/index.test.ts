@@ -5,11 +5,11 @@ describe("IO", () => {
   it("lifts a value with `IO.of` to an `IO` and doesn't immediatly fire side-effects", () => {
     expect.assertions(2);
 
-    const original = { id: Math.random() };
+    const input = { id: Math.random() };
 
-    const fn = jest.fn(() => original);
+    const fn = jest.fn();
 
-    const io = IO.of(async (...args) => fn(...args));
+    const io = IO.of(input).map(fn);
 
     expect(io).toBeInstanceOf(IO);
     expect(fn).not.toHaveBeenCalled();
@@ -18,46 +18,50 @@ describe("IO", () => {
   it("returns a `Either.right` value when run succeeds", async () => {
     expect.assertions(5);
 
-    const original = { id: Math.random() };
+    const input = { id: Math.random() };
 
-    const fn = jest.fn(() => original);
+    const output = { id: Math.random() };
 
-    const io = IO.of(async (...args) => fn(...args));
+    const fn = jest.fn(async (_) => output);
+
+    const io = IO.of(input).map(fn);
 
     expect(fn).not.toHaveBeenCalled();
 
-    const output = await io.run();
+    const result = await io.run();
 
     expect(fn).toHaveBeenCalled();
-    expect(fn).toHaveBeenCalledWith();
-    expect(Either.right(output)).toBe(true);
+    expect(fn).toHaveBeenCalledWith(input);
+    expect(Either.right(result)).toBe(true);
 
-    if (!Either.right(output)) {
+    if (!Either.right(result)) {
       fail();
     }
 
-    const value = output.unwrap();
+    const value = result.unwrap();
 
-    expect(value).toBe(original);
+    expect(value).toBe(output);
   });
 
   it("returns a `Either.left` value when run fails", async () => {
     expect.assertions(6);
 
+    const input = { id: Math.random() };
+
     const error = new Error(`error: ${Math.random()}`);
 
-    const fn = jest.fn(() => {
+    const fn = jest.fn((_) => {
       throw error;
     });
 
-    const io = IO.of(async (...args) => fn(...args));
+    const io = IO.of(input).map(async (...args) => fn(...args));
 
     expect(fn).not.toHaveBeenCalled();
 
     const output = await io.run();
 
     expect(fn).toHaveBeenCalled();
-    expect(fn).toHaveBeenCalledWith();
+    expect(fn).toHaveBeenCalledWith(input);
     expect(Either.left(output)).toBe(true);
 
     if (!Either.left(output)) {
@@ -124,7 +128,7 @@ describe("IO", () => {
       return transform2;
     });
 
-    const io = IO.of(async () => original)
+    const io = IO.of(original)
       .map(async (...args) => fn1(...args))
       .map(async (...args) => fn2(...args));
 
@@ -162,7 +166,7 @@ describe("IO", () => {
 
     const io = fns.reduce(
       (io, fn) => io.map(async (...args) => fn(...args)),
-      IO.of(async () => original),
+      IO.of(original),
     );
 
     fns.forEach((fn) => {
@@ -208,7 +212,7 @@ describe("IO", () => {
 
     const io = fns.reduce(
       (io, fn) => io.map(async (...args) => fn(...args)),
-      IO.of(async () => original),
+      IO.of(original),
     );
 
     fns.forEach((fn) => {

@@ -1,7 +1,11 @@
 import { Either } from "@ev-fp/either";
 
 export class IO<T> {
-  static of<T>(fn: () => Promise<T>) {
+  static of<T>(value: T) {
+    return IO.from(async () => value);
+  }
+
+  static from<T>(fn: () => Promise<T>) {
     return new IO<T>(fn);
   }
 
@@ -12,7 +16,7 @@ export class IO<T> {
   }
 
   public map<Q>(fn: (value: T) => Promise<Q>) {
-    return new IO(async () => {
+    return IO.from(async () => {
       const either = await this.run();
 
       const unwrapped = either.unwrap();
