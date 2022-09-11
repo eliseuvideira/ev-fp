@@ -1,9 +1,9 @@
 export abstract class Maybe<T> {
-  static of<T>(value: T) {
+  static of<T>(value: T): Something<T> {
     return new Something<T>(value);
   }
 
-  static null() {
+  static null(): Nothing<null> {
     return new Nothing<null>();
   }
 

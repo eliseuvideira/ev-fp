@@ -1,1 +1,1 @@
-export { Maybe, Nothing, Something } from "./utils/Maybe";
+export { Maybe } from "./utils/Maybe";

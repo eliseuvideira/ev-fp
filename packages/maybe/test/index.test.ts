@@ -1,4 +1,4 @@
-import { Maybe, Nothing, Something } from "../src/index";
+import { Maybe } from "../src/index";
 
 describe("Maybe", () => {
   it("lifts a value with `Maybe.of` to an `Maybe` as `Something` value", () => {
@@ -46,11 +46,11 @@ describe("Maybe", () => {
 
     const original = { id: Math.random() };
 
-    const something = new Something(original);
+    const something = Maybe.of(original);
 
     expect(Maybe.nothing(something)).toBe(false);
 
-    const nothing = new Nothing();
+    const nothing = Maybe.null();
 
     expect(Maybe.nothing(nothing)).toBe(true);
   });
@@ -60,11 +60,11 @@ describe("Maybe", () => {
 
     const original = { id: Math.random() };
 
-    const something = new Something(original);
+    const something = Maybe.of(original);
 
     expect(Maybe.something(something)).toBe(true);
 
-    const nothing = new Nothing();
+    const nothing = Maybe.null();
 
     expect(Maybe.something(nothing)).toBe(false);
   });
@@ -74,11 +74,11 @@ describe("Maybe", () => {
 
     const original = { id: Math.random() };
 
-    const something = new Something(original);
+    const something = Maybe.of(original);
 
     expect(something.type).toBe("something");
 
-    const nothing = new Nothing();
+    const nothing = Maybe.null();
 
     expect(nothing.type).toBe("nothing");
   });
@@ -88,7 +88,7 @@ describe("Nothing", () => {
   it("unwraps returning null", () => {
     expect.assertions(1);
 
-    const nothing = new Nothing();
+    const nothing = Maybe.null();
 
     const value = nothing.unwrap();
 
@@ -98,7 +98,7 @@ describe("Nothing", () => {
   it("maps creating a new instace of itself without calling the mapper function", () => {
     expect.assertions(2);
 
-    const nothing = new Nothing();
+    const nothing = Maybe.null();
 
     const fn = jest.fn();
 
@@ -115,7 +115,7 @@ describe("Something", () => {
 
     const original = { id: Math.random() };
 
-    const something = new Something(original);
+    const something = Maybe.of(original);
 
     const unwrapped = something.unwrap();
 
@@ -129,7 +129,7 @@ describe("Something", () => {
 
     const transformed = { id: Math.random() };
 
-    const something = new Something(original);
+    const something = Maybe.of(original);
 
     const fn = jest.fn(() => transformed);
 
