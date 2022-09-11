@@ -1,0 +1,8 @@
+{
+  "*.{js,json,ts}": [
+    "prettier --check"
+  ],
+  "*.ts": [
+    "eslint --max-warnings=0"
+  ]
+}

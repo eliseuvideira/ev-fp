@@ -1,0 +1,21 @@
+{
+  "name": "@lerna-starter/hello-world",
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "license": "MIT",
+  "files": [
+    "lib/**/*"
+  ],
+  "engines": {
+    "node": ">=14"
+  },
+  "repository": "git@github.com:eliseuvideira/lerna-starter.git",
+  "dependencies": {},
+  "devDependencies": {},
+  "peerDependencies": {},
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "rm -rf lib && yarn build"
+  }
+}

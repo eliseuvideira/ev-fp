@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+set -u
+
+package_name_regex="^[-a-z0-9][-a-z0-9._]{3,63}$"
+package_name="$1"
+
+if [[ ! "${package_name}" =~ ${package_name_regex} ]]; then
+  exit 1
+fi
+
+exit 0

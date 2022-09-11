@@ -1,0 +1,35 @@
+{
+  "name": "lerna-starter",
+  "version": "N/A",
+  "main": "N/A",
+  "author": "Eliseu Videira <eliseuvideira1@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^29.0.1",
+    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/parser": "^5.36.2",
+    "eslint": "^8.23.0",
+    "husky": "^8.0.1",
+    "jest": "^29.0.3",
+    "lerna": "^5.5.1",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
+    "ts-jest": "^29.0.0",
+    "typescript": "^4.8.3"
+  },
+  "peerDependencies": {},
+  "scripts": {
+    "bootstrap": "lerna exec yarn install",
+    "build": "lerna exec yarn build",
+    "clean": "lerna clean --yes",
+    "coverage": "jest --coverage && xdg-open coverage/lcov-report/index.html &>/dev/null",
+    "create-package": "./scripts/create-package",
+    "format": "prettier --write 'packages/*/src/**'",
+    "lint": "eslint --max-warnings=0 packages/*/src/**",
+    "prepare": "husky install",
+    "test": "jest",
+    "watch": "jest --watch"
+  }
+}

@@ -1,0 +1,133 @@
+#!/bin/bash
+
+set -e
+set -u
+
+script_name="$(basename "${0}")"
+script_dir="$(realpath "$(dirname "${0}")")"
+script_usage="${script_name} PACKAGE_NAME"
+
+usage() {
+  echo "${script_name}: usage: ${script_usage}" >&2
+}
+
+exit_with_error() {
+  echo "${script_name}: error: ${1}" >&2
+  usage
+  exit 1
+}
+
+recieved_arguments="${#}"
+expected_arguments="1"
+
+if [ "${recieved_arguments}" != "${expected_arguments}" ]; then
+  exit_with_error "invalid number of arguments, expected \"${expected_arguments}\", recieved \"${recieved_arguments}\""
+fi
+
+package_name="${1}"
+
+if ! "${script_dir}/validate-package-name" "${package_name}"; then
+  exit_with_error "\"${package_name}\" is not a valid package_name"
+fi
+
+package_dir="${script_dir}/../packages/${package_name}"
+
+if [ -d "${package_dir}" ]; then
+  exit_with_error "package \"${package_name}\" already exists (${package_dir})"
+fi
+
+get_organization() {
+  cat "${script_dir}/../package.json" | jq -r ".name"
+}
+
+organization="$(get_organization)"
+
+get_repo() {
+  git remote get-url origin
+}
+
+repo="$(get_repo)"
+
+create_directory() {
+  mkdir -p "${1}"
+}
+
+create_directory "${package_dir}"
+
+create_directory "${package_dir}/src"
+
+create_directory "${package_dir}/test"
+
+cat <<EOF >"${package_dir}/.yarnrc"
+version-git-message ":bookmark: v%s"
+version-tag-prefix "${package_name}-v"
+EOF
+
+cat <<EOF >"${package_dir}/package.json"
+{
+  "name": "@${organization}/${package_name}",
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "license": "MIT",
+  "files": [
+    "lib/**/*"
+  ],
+  "engines": {
+    "node": ">=14"
+  },
+  "repository": "${repo}",
+  "dependencies": {},
+  "devDependencies": {},
+  "peerDependencies": {},
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "rm -rf lib && yarn build"
+  }
+}
+EOF
+
+cat <<EOF >"${package_dir}/tsconfig.json"
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib"
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "lib", "test"]
+}
+EOF
+
+cat <<EOF >"${package_dir}/src/index.ts"
+export const main = () => {
+  console.log("Hello World");
+};
+EOF
+
+cat <<EOF >"${package_dir}/test/index.test.ts"
+import { main } from "../src/index";
+
+describe("main", () => {
+  it("prints Hello World to the console", () => {
+    expect.assertions(2);
+
+    const log = jest.fn();
+
+    const _ = console.log;
+    console.log = log;
+    try {
+      main();
+    } finally {
+      console.log = _;
+    }
+
+    expect(log).toHaveBeenCalledTimes(1);
+    expect(log).toHaveBeenCalledWith("Hello World");
+  });
+});
+EOF
+
+(
+  cd "${package_dir}" && yarn install
+)
