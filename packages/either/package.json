@@ -1,5 +1,5 @@
 {
-  "name": "@lerna-starter/hello-world",
+  "name": "@ev-fp/either",
   "version": "0.0.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -10,7 +10,7 @@
   "engines": {
     "node": ">=14"
   },
-  "repository": "git@github.com:eliseuvideira/lerna-starter.git",
+  "repository": "git@github.com:eliseuvideira/ev-fp.git",
   "dependencies": {},
   "devDependencies": {},
   "peerDependencies": {},
